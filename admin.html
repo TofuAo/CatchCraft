@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Master Fisher</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="common.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, var(--deep-blue), var(--deep-sea));
+            color: white;
+            min-height: 100vh;
+        }
+
+        .admin-card {
+            background: rgba(10, 147, 150, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(148, 210, 189, 0.3);
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .stats-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--sea-foam);
+        }
+
+        .action-button {
+            background: var(--ocean-teal);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-button:hover {
+            background: var(--deep-sea);
+            transform: translateY(-2px);
+        }
+
+        .table-container {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+        }
+
+        .admin-table {
+            width: 100%;
+            color: white;
+        }
+
+        .admin-table th {
+            color: var(--sea-foam);
+            border-bottom: 2px solid var(--ocean-teal);
+        }
+
+        .admin-table td {
+            border-bottom: 1px solid rgba(148, 210, 189, 0.3);
+        }
+
+        .tab-content {
+            padding: 1rem 0;
+        }
+
+        .nav-tabs .nav-link {
+            color: var(--wave-blue);
+        }
+
+        .nav-tabs .nav-link.active {
+            background: var(--ocean-teal);
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <div class="admin-header">
+            <h1>Admin Dashboard</h1>
+            <div>
+                <button class="action-button" onclick="logout()">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" id="totalUsers">0</div>
+                    <div>Total Users</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" id="totalPaths">0</div>
+                    <div>Learning Paths</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" id="totalModules">0</div>
+                    <div>Modules</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" id="activeUsers">0</div>
+                    <div>Active Users</div>
+                </div>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="paths-tab" data-bs-toggle="tab" href="#paths" role="tab">Learning Paths</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="modules-tab" data-bs-toggle="tab" href="#modules" role="tab">Modules</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="users-tab" data-bs-toggle="tab" href="#users" role="tab">Users</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="content-tab" data-bs-toggle="tab" href="#content" role="tab">Content</a>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="adminTabContent">
+            <!-- Learning Paths Tab -->
+            <div class="tab-pane fade show active" id="paths" role="tabpanel">
+                <div class="admin-card">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h3>Learning Paths</h3>
+                        <button class="action-button" onclick="createNewPath()">
+                            <i class="bi bi-plus-lg"></i> New Path
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Difficulty</th>
+                                    <th>Modules</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pathsTableBody">
+                                <!-- Paths will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modules Tab -->
+            <div class="tab-pane fade" id="modules" role="tabpanel">
+                <div class="admin-card">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h3>Modules</h3>
+                        <button class="action-button" onclick="createNewModule()">
+                            <i class="bi bi-plus-lg"></i> New Module
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Path</th>
+                                    <th>Order</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modulesTableBody">
+                                <!-- Modules will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Tab -->
+            <div class="tab-pane fade" id="users" role="tabpanel">
+                <div class="admin-card">
+                    <h3>Users</h3>
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Join Date</th>
+                                    <th>Progress</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Users will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Tab -->
+            <div class="tab-pane fade" id="content" role="tabpanel">
+                <div class="admin-card">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h3>Content Management</h3>
+                        <button class="action-button" onclick="createNewContent()">
+                            <i class="bi bi-plus-lg"></i> New Content
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Module</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="contentTableBody">
+                                <!-- Content will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAdminSession();
+            loadDashboardStats();
+            loadAllData();
+        });
+
+        function checkAdminSession() {
+            fetch('check_admin_session.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        window.location.href = 'ptalogin.html';
+                    }
+                })
+                .catch(error => {
+                    console.error('Session check error:', error);
+                    window.location.href = 'ptalogin.html';
+                });
+        }
+
+        function loadDashboardStats() {
+            fetch('get_admin_stats.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('totalUsers').textContent = data.stats.total_users;
+                        document.getElementById('totalPaths').textContent = data.stats.total_paths;
+                        document.getElementById('totalModules').textContent = data.stats.total_modules;
+                        document.getElementById('activeUsers').textContent = data.stats.active_users;
+                    }
+                })
+                .catch(error => console.error('Error loading stats:', error));
+        }
+
+        function loadAllData() {
+            loadPaths();
+            loadModules();
+            loadUsers();
+            loadContent();
+        }
+
+        function loadPaths() {
+            fetch('get_admin_paths.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const tbody = document.getElementById('pathsTableBody');
+                        tbody.innerHTML = data.paths.map(path => `
+                            <tr>
+                                <td>${path.title}</td>
+                                <td>${path.type}</td>
+                                <td>${path.difficulty}</td>
+                                <td>${path.module_count}</td>
+                                <td>
+                                    <button class="action-button" onclick="editPath(${path.id})">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="action-button" onclick="deletePath(${path.id})">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                })
+                .catch(error => console.error('Error loading paths:', error));
+        }
+
+        function loadModules() {
+            fetch('get_admin_modules.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const tbody = document.getElementById('modulesTableBody');
+                        tbody.innerHTML = data.modules.map(module => `
+                            <tr>
+                                <td>${module.title}</td>
+                                <td>${module.type}</td>
+                                <td>${module.path_title}</td>
+                                <td>${module.order_number}</td>
+                                <td>
+                                    <button class="action-button" onclick="editModule(${module.id})">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="action-button" onclick="deleteModule(${module.id})">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                })
+                .catch(error => console.error('Error loading modules:', error));
+        }
+
+        function loadUsers() {
+            fetch('get_admin_users.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const tbody = document.getElementById('usersTableBody');
+                        tbody.innerHTML = data.users.map(user => `
+                            <tr>
+                                <td>${user.username}</td>
+                                <td>${user.email}</td>
+                                <td>${new Date(user.join_date).toLocaleDateString()}</td>
+                                <td>${user.progress}%</td>
+                                <td>
+                                    <button class="action-button" onclick="viewUserDetails(${user.id})">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    <button class="action-button" onclick="toggleUserStatus(${user.id})">
+                                        <i class="bi bi-toggle-on"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                })
+                .catch(error => console.error('Error loading users:', error));
+        }
+
+        function loadContent() {
+            fetch('get_admin_content.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const tbody = document.getElementById('contentTableBody');
+                        tbody.innerHTML = data.content.map(item => `
+                            <tr>
+                                <td>${item.title}</td>
+                                <td>${item.type}</td>
+                                <td>${item.module_title}</td>
+                                <td>${item.status}</td>
+                                <td>
+                                    <button class="action-button" onclick="editContent(${item.id})">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button class="action-button" onclick="deleteContent(${item.id})">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                })
+                .catch(error => console.error('Error loading content:', error));
+        }
+
+        // CRUD Functions
+        function createNewPath() {
+            window.location.href = 'create-learning-path.php';
+        }
+
+        function createNewModule() {
+            window.location.href = 'create-module.php';
+        }
+
+        function createNewContent() {
+            window.location.href = 'create-content.php';
+        }
+
+        function editPath(id) {
+            window.location.href = `edit-learning-path.php?id=${id}`;
+        }
+
+        function editModule(id) {
+            window.location.href = `edit-module.php?id=${id}`;
+        }
+
+        function editContent(id) {
+            window.location.href = `edit-content.php?id=${id}`;
+        }
+
+        function deletePath(id) {
+            if (confirm('Are you sure you want to delete this learning path?')) {
+                fetch('delete_path.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: id })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadPaths();
+                    } else {
+                        alert('Error deleting path: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+
+        function deleteModule(id) {
+            if (confirm('Are you sure you want to delete this module?')) {
+                fetch('delete_module.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: id })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadModules();
+                    } else {
+                        alert('Error deleting module: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+
+        function deleteContent(id) {
+            if (confirm('Are you sure you want to delete this content?')) {
+                fetch('delete_content.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: id })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadContent();
+                    } else {
+                        alert('Error deleting content: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+
+        function viewUserDetails(id) {
+            window.location.href = `user-details.php?id=${id}`;
+        }
+
+        function toggleUserStatus(id) {
+            fetch('toggle_user_status.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id: id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadUsers();
+                } else {
+                    alert('Error updating user status: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function logout() {
+            fetch('logout.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = 'ptalogi.html';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Fishing Master</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1a1d20;
+            color: #d8dee9;
+        }
+        .sidebar {
+            background-color: #2e3440;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .nav-link {
+            color: #d8dee9;
+            transition: all 0.3s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #88c0d0;
+            background-color: #3b4252;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            color: #000000;
+        }
+        .table {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        .table thead th {
+            background-color: #f8f9fa;
+            color: #000000;
+            font-weight: bold;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .table tbody td {
+            color: #000000;
+            border-top: 1px solid #dee2e6;
+            background-color: #ffffff;
+        }
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        .form-control, .form-select {
+            background-color: #ffffff;
+            border-color: #dee2e6;
+            color: #000000;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: #ffffff;
+            border-color: #80bdff;
+            color: #000000;
+        }
+        .modal-content {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            color: #000000;
+        }
+        .modal-header, .modal-footer {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            color: #000000;
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            color: #000000;
+        }
+        .card-body {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        h2.mb-4 {
+            color: #88c0d0;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #88c0d0;
+            padding-bottom: 0.5rem;
+        }
+        .btn-primary {
+            background-color: #5e81ac;
+            border-color: #5e81ac;
+            color: #eceff4;
+        }
+        .btn-primary:hover {
+            background-color: #81a1c1;
+            border-color: #81a1c1;
+        }
+        .btn-danger {
+            background-color: #bf616a;
+            border-color: #bf616a;
+            color: #eceff4;
+        }
+        .btn-danger:hover {
+            background-color: #d08770;
+            border-color: #d08770;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            color: #000000;
+        }
+        .table-responsive {
+            background-color: #212529;
+            border-radius: 0.25rem;
+            padding: 0.5rem;
+        }
+        .form-label {
+            color: #000000;
+        }
+        .card-title {
+            color: #000000;
+            font-weight: bold;
+        }
+        h2, h3, h4, h5 {
+            color: #000000;
+        }
+        .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+        /* Dark text for light backgrounds */
+        .table-light,
+        .table-light th,
+        .table-light td,
+        .bg-light,
+        .bg-white,
+        .alert-success,
+        .alert-warning,
+        .alert-info,
+        .badge-light,
+        .bg-success,
+        .bg-warning,
+        .bg-info {
+            color: #212529 !important;
+        }
+
+        /* Badge colors with dark text */
+        .badge.bg-warning,
+        .badge.bg-info,
+        .badge.bg-light,
+        .badge.bg-success {
+            color: #212529;
+        }
+
+        /* Alert colors with dark text */
+        .alert-success,
+        .alert-warning,
+        .alert-info {
+            color: #212529;
+        }
+
+        /* Form elements with light backgrounds */
+        .form-control[readonly],
+        .form-control:disabled,
+        .form-control.bg-light,
+        .form-select[readonly],
+        .form-select:disabled,
+        .form-select.bg-light {
+            color: #212529;
+            background-color: #e9ecef;
+        }
+
+        /* Card with light background */
+        .card.bg-light,
+        .card.bg-white {
+            color: #212529;
+        }
+        .card.bg-light .card-title,
+        .card.bg-white .card-title {
+            color: #212529;
+        }
+
+        /* Success and warning buttons text */
+        .btn-success,
+        .btn-warning {
+            color: #212529;
+        }
+
+        /* Progress bar labels on light backgrounds */
+        .progress-bar.bg-warning,
+        .progress-bar.bg-success,
+        .progress-bar.bg-info {
+            color: #212529;
+        }
+
+        /* Stats cards with better contrast */
+        .card .card-body h2 {
+            color: #000000;
+        }
+
+        /* Role badges with better contrast */
+        .badge {
+            font-weight: 500;
+        }
+        .badge.bg-primary {
+            background-color: #0d6efd !important;
+            color: #ffffff;
+        }
+        .badge.bg-secondary {
+            background-color: #6c757d !important;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <h3 class="mb-4">Admin Panel</h3>
+                <div class="nav flex-column">
+                    <a class="nav-link active" href="#dashboard" data-bs-toggle="tab">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                    <a class="nav-link" href="#users" data-bs-toggle="tab">
+                        <i class="bi bi-people"></i> Users
+                    </a>
+                    <a class="nav-link" href="#posts" data-bs-toggle="tab">
+                        <i class="bi bi-file-text"></i> Posts
+                    </a>
+                    <a class="nav-link" href="#learning" data-bs-toggle="tab">
+                        <i class="bi bi-book"></i> Learning Paths
+                    </a>
+                    <a class="nav-link" href="#support" data-bs-toggle="tab">
+                        <i class="bi bi-headset"></i> Customer Support
+                    </a>
+                    <a class="nav-link" href="#database" data-bs-toggle="tab">
+                        <i class="bi bi-database"></i> Database
+                    </a>
+                    <a class="nav-link text-danger" href="#" onclick="logout(); return false;">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <div class="tab-content">
+                    <!-- Dashboard -->
+                    <div class="tab-pane fade show active" id="dashboard">
+                        <h2 class="mb-4">Dashboard Overview</h2>
+                        <div class="row">
+                            <div class="col-md-4 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Users</h5>
+                                        <h2 id="totalUsers">Loading...</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Posts</h5>
+                                        <h2 id="totalPosts">Loading...</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Active Learning Paths</h5>
+                                        <h2 id="totalPaths">Loading...</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users Management -->
+                    <div class="tab-pane fade" id="users">
+                        <h2 class="mb-4">User Management</h2>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Username</th>
+                                                <th>Email</th>
+                                                <th>Role</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="usersTableBody">
+                                            <!-- Users will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Posts Management -->
+                    <div class="tab-pane fade" id="posts">
+                        <h2 class="mb-4">Posts Management</h2>
+                        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#newPostModal">
+                            <i class="bi bi-plus-circle"></i> New Post
+                        </button>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>Author</th>
+                                                <th>Date</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="postsTableBody">
+                                            <!-- Posts will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Learning Paths -->
+                    <div class="tab-pane fade" id="learning">
+                        <h2 class="mb-4">Learning Path Management</h2>
+                        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#newPathModal">
+                            <i class="bi bi-plus-circle"></i> New Learning Path
+                        </button>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>Difficulty</th>
+                                                <th>Modules</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="pathsTableBody">
+                                            <!-- Learning paths will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer Support -->
+                    <div class="tab-pane fade" id="support">
+                        <h2 class="mb-4">Customer Support</h2>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Contact Information</h5>
+                                        <form id="updateContactForm">
+                                            <div class="mb-3">
+                                                <label class="form-label">WhatsApp Number</label>
+                                                <input type="text" class="form-control" id="whatsappNumber" name="whatsapp">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Support Email</label>
+                                                <input type="email" class="form-control" id="supportEmail" name="email">
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Update Contact Info</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Support Tickets</h5>
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>User</th>
+                                                        <th>Issue</th>
+                                                        <th>Status</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="ticketsTableBody">
+                                                    <!-- Support tickets will be loaded here -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Database Management -->
+                    <div class="tab-pane fade" id="database">
+                        <h2 class="mb-4">Database Management</h2>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Database Operations</h5>
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-primary" onclick="backupDatabase()">
+                                                <i class="bi bi-download"></i> Backup Database
+                                            </button>
+                                            <button class="btn btn-warning" onclick="optimizeTables()">
+                                                <i class="bi bi-gear"></i> Optimize Tables
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Custom SQL Query</h5>
+                                        <div class="mb-3">
+                                            <textarea class="form-control" id="sqlQuery" rows="4" placeholder="Enter your SQL query"></textarea>
+                                        </div>
+                                        <button class="btn btn-primary" onclick="executeQuery()">Execute Query</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- New Learning Path Modal -->
+                    <div class="modal fade" id="newPathModal" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Add New Learning Path</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="newPathForm">
+                                        <div class="mb-3">
+                                            <label for="pathTitle" class="form-label">Title</label>
+                                            <input type="text" class="form-control" id="pathTitle" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="pathDescription" class="form-label">Description</label>
+                                            <textarea class="form-control" id="pathDescription" rows="3" required></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="pathDifficulty" class="form-label">Difficulty Level</label>
+                                            <select class="form-control" id="pathDifficulty" required>
+                                                <option value="beginner">Beginner</option>
+                                                <option value="intermediate">Intermediate</option>
+                                                <option value="advanced">Advanced</option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-primary" onclick="submitNewPath()">Add Path</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- New Post Modal -->
+                    <div class="modal fade" id="newPostModal" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Add New Post</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="newPostForm">
+                                        <div class="mb-3">
+                                            <label for="postTitle" class="form-label">Title</label>
+                                            <input type="text" class="form-control" id="postTitle" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="postContent" class="form-label">Content</label>
+                                            <textarea class="form-control" id="postContent" rows="5" required></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="postImage" class="form-label">Image (Optional)</label>
+                                            <input type="file" class="form-control" id="postImage" accept="image/*">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-primary" onclick="submitNewPost()">Add Post</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let isInitialized = false;
+
+        // Check session and admin status when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSession();
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+
+        function checkSession() {
+            fetch('admin_api.php?action=checkSession')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        alert('Session expired or unauthorized. You will be redirected to login in 5 seconds.');
+                        setTimeout(() => window.location.href = 'ptalogin.html', 5000);
+                        return;
+                    } else if (!data.user.is_admin) {
+                        window.location.href = 'ptahome.html';
+                    } else if (!isInitialized) {
+                        console.log('Initializing dashboard...');
+                        isInitialized = true;
+                        initializeDashboard();
+                    }
+                })
+                .catch(error => {
+                    console.error('Session check error:', error);
+                    // Don't redirect on network errors, just log them
+                });
+        }
+
+        // Add periodic session refresh
+        function refreshSession() {
+            fetch('admin_api.php?action=refreshSession')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        console.log('Session refresh failed, will retry in 5 minutes');
+                    }
+                })
+                .catch(error => {
+                    console.error('Session refresh error:', error);
+                });
+        }
+
+        // Check session every 5 minutes
+        setInterval(refreshSession, 300000);
+
+        function initializeDashboard() {
+            console.log('Loading dashboard data...');
+            // Initialize dashboard for admin
+            loadDashboardData();
+            loadUsers();
+            loadPathways();
+            loadPosts();
+            
+            // Add user view link to navigation
+            const nav = document.querySelector('.admin-nav') || document.querySelector('nav');
+            if (nav) {
+                const userViewLink = document.createElement('a');
+                userViewLink.href = 'ptahome.html';
+                userViewLink.className = 'nav-link';
+                userViewLink.innerHTML = '<i class="bi bi-user-circle"></i> Switch to User View';
+                nav.appendChild(userViewLink);
+            }
+            
+            // Add tab change handlers
+            const tabs = document.querySelectorAll('.nav-link');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    if (this.getAttribute('href').startsWith('pta')) {
+                        return; // Allow normal navigation for external links
+                    }
+                    e.preventDefault();
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    const target = this.getAttribute('href');
+                    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('show', 'active'));
+                    document.querySelector(target).classList.add('show', 'active');
+                });
+            });
+        }
+
+        // Load dashboard data
+        function loadDashboardData() {
+            fetch('admin_api.php?action=getDashboardStats')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('totalUsers').textContent = data.stats.users;
+                        document.getElementById('totalPosts').textContent = data.stats.posts;
+                        document.getElementById('totalPaths').textContent = data.stats.paths;
+                    }
+                });
+        }
+
+        // Load users
+        function loadUsers() {
+            fetch('admin_api.php?action=getUsers')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const tbody = document.getElementById('usersTableBody');
+                        tbody.innerHTML = '';
+                        data.users.forEach(user => {
+                            tbody.innerHTML += `
+                                <tr>
+                                    <td>${user.id}</td>
+                                    <td>${user.username}</td>
+                                    <td>${user.email}</td>
+                                    <td>${user.is_admin ? 'Admin' : 'User'}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning" onclick="editUser(${user.id})">Edit</button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">Delete</button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    }
+                });
+        }
+
+        // Load posts
+        function loadPosts() {
+            fetch('admin_api.php?action=getPosts')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const tbody = document.getElementById('postsTableBody');
+                        tbody.innerHTML = '';
+                        data.posts.forEach(post => {
+                            tbody.innerHTML += `
+                                <tr>
+                                    <td>${post.title}</td>
+                                    <td>${post.author}</td>
+                                    <td>${post.created_at}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning" onclick="editPost(${post.id})">Edit</button>
+                                        <button class="btn btn-sm btn-danger" onclick="deletePost(${post.id})">Delete</button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    }
+                });
+        }
+
+        // Database operations
+        function backupDatabase() {
+            if (confirm('Are you sure you want to backup the database?')) {
+                fetch('admin_api.php?action=backupDatabase')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Database backup created successfully!');
+                        } else {
+                            alert('Error creating backup: ' + data.message);
+                        }
+                    });
+            }
+        }
+
+        function optimizeTables() {
+            if (confirm('Are you sure you want to optimize database tables?')) {
+                fetch('admin_api.php?action=optimizeTables')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Tables optimized successfully!');
+                        } else {
+                            alert('Error optimizing tables: ' + data.message);
+                        }
+                    });
+            }
+        }
+
+        function executeQuery() {
+            const query = document.getElementById('sqlQuery').value;
+            if (confirm('Are you sure you want to execute this query?')) {
+                fetch('admin_api.php?action=executeQuery', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query: query })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Query executed successfully!');
+                    } else {
+                        alert('Error executing query: ' + data.message);
+                    }
+                });
+            }
+        }
+
+        // Load pathways
+        async function loadPathways() {
+            try {
+                const response = await fetch('api/learning.php?action=get_paths');
+                const data = await response.json();
+
+                if (data.success) {
+                    displayLearningPaths(data.paths);
+                } else {
+                    throw new Error(data.message || 'Failed to load learning paths');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('error', 'Error loading learning paths: ' + error.message);
+            }
+        }
+
+        // Submit new learning path
+        async function submitNewPath() {
+            const title = document.getElementById('pathTitle').value.trim();
+            const description = document.getElementById('pathDescription').value.trim();
+            const difficulty_level = document.getElementById('pathDifficulty').value;
+
+            if (!title || !description) {
+                showAlert('error', 'Please fill in all required fields');
+                return;
+            }
+
+            try {
+                const response = await fetch('api/learning.php?action=add_path', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title,
+                        description,
+                        difficulty_level
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Close modal and refresh table
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('newPathModal'));
+                    modal.hide();
+                    document.getElementById('newPathForm').reset();
+                    loadPathways();
+                    showAlert('success', 'Learning path added successfully!');
+                } else {
+                    showAlert('error', data.message || 'Error adding learning path');
+                }
+            } catch (error) {
+                showAlert('error', 'Error adding learning path');
+                console.error('Error:', error);
+            }
+        }
+
+        // Function to display learning paths
+        function displayLearningPaths(paths) {
+            const tableBody = document.getElementById('pathsTableBody');
+            if (!tableBody) {
+                console.error('Learning paths table body element not found');
+                return;
+            }
+
+            if (paths && paths.length > 0) {
+                tableBody.innerHTML = paths.map(path => `
+                    <tr>
+                        <td>${path.title || ''}</td>
+                        <td>
+                            <span class="badge bg-${getDifficultyColor(path.difficulty_level)}">
+                                ${path.difficulty_level || 'N/A'}
+                            </span>
+                        </td>
+                        <td>${path.total_modules || 0}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="editPath(${path.id})">
+                                <i class="bi bi-pencil"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deletePath(${path.id})">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="4" class="text-center">No learning paths found</td></tr>';
+            }
+        }
+
+        // Function to submit new post
+        async function submitNewPost() {
+            const title = document.getElementById('postTitle').value.trim();
+            const content = document.getElementById('postContent').value.trim();
+            const imageFile = document.getElementById('postImage').files[0];
+
+            if (!title || !content) {
+                showAlert('error', 'Please fill in all required fields');
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('title', title);
+                formData.append('content', content);
+                
+                if (imageFile) {
+                    formData.append('image', imageFile);
+                }
+
+                const response = await fetch('api/posts.php?action=add_post', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Close modal and refresh table
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('newPostModal'));
+                    modal.hide();
+                    document.getElementById('newPostForm').reset();
+                    loadPosts();
+                    showAlert('success', 'Post added successfully!');
+                } else {
+                    showAlert('error', data.message || 'Error adding post');
+                }
+            } catch (error) {
+                showAlert('error', 'Error adding post');
+                console.error('Error:', error);
+            }
+        }
+
+        // Function to show alerts
+        function showAlert(type, message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+            alertDiv.style.backgroundColor = type === 'success' ? '#a3be8c' : '#bf616a';
+            alertDiv.style.color = '#eceff4';
+            alertDiv.style.border = 'none';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            const mainContent = document.querySelector('.main-content');
+            if (mainContent) {
+                mainContent.insertBefore(alertDiv, mainContent.firstChild);
+                
+                // Auto dismiss after 5 seconds
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 5000);
+            }
+        }
+
+        // Helper function to get badge color based on difficulty
+        function getDifficultyColor(difficulty) {
+            switch (difficulty) {
+                case 'beginner':
+                    return 'success';
+                case 'intermediate':
+                    return 'warning';
+                case 'advanced':
+                    return 'danger';
+                default:
+                    return 'secondary';
+            }
+        }
+
+        // User Management Functions
+        function editUser(userId) {
+            fetch(`admin_api.php?action=getUser&id=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const user = data.user;
+                        // Create and show edit modal
+                        const modalHtml = `
+                            <div class="modal fade" id="editUserModal" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Edit User</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="editUserForm">
+                                                <input type="hidden" id="editUserId" value="${user.id}">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Username</label>
+                                                    <input type="text" class="form-control" id="editUsername" value="${user.username}">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Email</label>
+                                                    <input type="email" class="form-control" id="editEmail" value="${user.email}">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Role</label>
+                                                    <select class="form-select" id="editRole">
+                                                        <option value="0" ${!user.is_admin ? 'selected' : ''}>User</option>
+                                                        <option value="1" ${user.is_admin ? 'selected' : ''}>Admin</option>
+                                                    </select>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="button" class="btn btn-primary" onclick="updateUser()">Save Changes</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+
+                        // Remove existing modal if any
+                        const existingModal = document.getElementById('editUserModal');
+                        if (existingModal) {
+                            existingModal.remove();
+                        }
+
+                        // Add modal to document
+                        document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+                        // Show modal
+                        const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+                        modal.show();
+                    } else {
+                        showAlert('error', data.message || 'Error loading user data');
+                    }
+                })
+                .catch(error => {
+                    showAlert('error', 'Error loading user data');
+                    console.error('Error:', error);
+                });
+        }
+
+        function updateUser() {
+            const userId = document.getElementById('editUserId').value;
+            const username = document.getElementById('editUsername').value;
+            const email = document.getElementById('editEmail').value;
+            const isAdmin = document.getElementById('editRole').value === '1';
+
+            fetch('admin_api.php?action=updateUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: userId,
+                    username: username,
+                    email: email,
+                    is_admin: isAdmin })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                    modal.hide();
+                    loadUsers();
+                    showAlert('success', 'User updated successfully');
+                } else {
+                    showAlert('error', data.message || 'Error updating user');
+                }
+            })
+            .catch(error => {
+                showAlert('error', 'Error updating user');
+                console.error('Error:', error);
+            });
+        }
+
+        function deleteUser(userId) {
+            if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+                fetch(`admin_api.php?action=deleteUser&id=${userId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadUsers();
+                        showAlert('success', 'User deleted successfully');
+                    } else {
+                        showAlert('error', data.message || 'Error deleting user');
+                    }
+                })
+                .catch(error => {
+                    showAlert('error', 'Error deleting user');
+                    console.error('Error:', error);
+                });
+            }
+        }
+
+        // Post Management Functions
+        function editPost(postId) {
+            fetch(`admin_api.php?action=getPost&id=${postId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const post = data.post;
+                        document.getElementById('postTitle').value = post.title;
+                        document.getElementById('postContent').value = post.content;
+                        const modal = new bootstrap.Modal(document.getElementById('newPostModal'));
+                        modal.show();
+                        // Add hidden input for post ID
+                        const hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.id = 'editPostId';
+                        hiddenInput.value = postId;
+                        document.getElementById('newPostForm').appendChild(hiddenInput);
+                    } else {
+                        showAlert('error', data.message || 'Error loading post data');
+                    }
+                })
+                .catch(error => {
+                    showAlert('error', 'Error loading post data');
+                    console.error('Error:', error);
+                });
+        }
+
+        function deletePost(postId) {
+            if (confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
+                fetch(`admin_api.php?action=deletePost&id=${postId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadPosts();
+                        showAlert('success', 'Post deleted successfully');
+                    } else {
+                        showAlert('error', data.message || 'Error deleting post');
+                    }
+                })
+                .catch(error => {
+                    showAlert('error', 'Error deleting post');
+                    console.error('Error:', error);
+                });
+            }
+        }
+
+        // Learning Path Management Functions
+        function editPath(pathId) {
+            fetch(`admin_api.php?action=getPath&id=${pathId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const path = data.path;
+                        document.getElementById('pathTitle').value = path.title;
+                        document.getElementById('pathDescription').value = path.description;
+                        document.getElementById('pathDifficulty').value = path.difficulty_level;
+                        const modal = new bootstrap.Modal(document.getElementById('newPathModal'));
+                        modal.show();
+                        // Add hidden input for path ID
+                        const hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.id = 'editPathId';
+                        hiddenInput.value = pathId;
+                        document.getElementById('newPathForm').appendChild(hiddenInput);
+                    } else {
+                        showAlert('error', data.message || 'Error loading path data');
+                    }
+                })
+                .catch(error => {
+                    showAlert('error', 'Error loading path data');
+                    console.error('Error:', error);
+                });
+        }
+
+        function deletePath(pathId) {
+            if (confirm('Are you sure you want to delete this learning path? This will also delete all associated modules and progress data.')) {
+                fetch(`admin_api.php?action=deletePath&id=${pathId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadPathways();
+                        showAlert('success', 'Learning path deleted successfully');
+                    } else {
+                        showAlert('error', data.message || 'Error deleting learning path');
+                    }
+                })
+                .catch(error => {
+                    showAlert('error', 'Error deleting learning path');
+                    console.error('Error:', error);
+                });
+            }
+        }
+
+        // Logout function
+        function logout() {
+            fetch('logout.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = 'ptalogin.html';
+                    } else {
+                        showAlert('error', 'Error logging out');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    window.location.href = 'ptalogin.html';
+                });
+        }
+
+        // Check admin session on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const response = await fetch('check_admin.php');
+                const data = await response.json();
+                if (!data.success) {
+                    alert('Session expired or unauthorized. You will be redirected to login in 5 seconds.');
+                    setTimeout(() => window.location.href = 'ptalogin.html', 5000);
+                    return;
+                }
+            } catch (error) {
+                console.error('Error checking admin session:', error);
+                alert('Session expired or unauthorized. You will be redirected to login in 5 seconds.');
+                setTimeout(() => window.location.href = 'ptalogin.html', 5000);
+                return;
+            }
+        });
+
+        // Handle learning path form submission
+        var learningPathForm = document.getElementById('learningPathForm');
+        if (learningPathForm) {
+            learningPathForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    title: document.getElementById('pathTitle').value,
+                    description: document.getElementById('pathDescription').value,
+                    difficulty: document.getElementById('pathDifficulty').value,
+                    type: document.getElementById('pathType').value,
+                    estimated_time: document.getElementById('estimatedTime').value,
+                    modules: []
+                };
+
+                // Get all module groups
+                const moduleGroups = document.querySelectorAll('.module-group');
+                moduleGroups.forEach((group, index) => {
+                    formData.modules.push({
+                        title: group.querySelector('.module-title').value,
+                        description: group.querySelector('.module-description').value,
+                        type: group.querySelector('.module-type').value,
+                        content_url: group.querySelector('.module-content').value
+                    });
+                });
+
+                try {
+                    const response = await fetch('api/create_learning_path.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('Learning path created successfully!');
+                        window.location.reload();
+                    } else {
+                        alert(data.message || 'Failed to create learning path');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to create learning path');
+                }
+            });
+        }
+
+        // Add module to form
+        function addModule() {
+            const moduleContainer = document.getElementById('modulesContainer');
+            const moduleCount = moduleContainer.children.length;
+            
+            const moduleHtml = `
+                <div class="module-group card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Module ${moduleCount + 1}</h5>
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control module-title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control module-description" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Type</label>
+                            <select class="form-select module-type" required>
+                                <option value="Video">Video</option>
+                                <option value="Article">Article</option>
+                                <option value="Interactive">Interactive</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Content URL</label>
+                            <input type="text" class="form-control module-content" required>
+                        </div>
+                        <button type="button" class="btn btn-danger" onclick="this.parentElement.parentElement.remove()">Remove Module</button>
+                    </div>
+                </div>
+            `;
+            
+            moduleContainer.insertAdjacentHTML('beforeend', moduleHtml);
+        }
+    </script>
+</body>
+</html> 

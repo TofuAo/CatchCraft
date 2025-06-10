@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Learning Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --deep-blue: #005f73;
+            --ocean-teal: #0a9396;
+            --wave-blue: #94d2bd;
+            --sea-foam: #e9d8a6;
+            --coral: #ee9b00;
+            --sunset-orange: #ca6702;
+            --deep-sea: #001219;
+            --success: #4CAF50;
+            --error: #f44336;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--deep-blue), var(--deep-sea));
+            color: white;
+            min-height: 100vh;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: rgba(10, 147, 150, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .header h1 {
+            color: var(--sea-foam);
+        }
+
+        .btn {
+            background: var(--coral);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--sunset-orange);
+        }
+
+        .admin-section {
+            background: rgba(10, 147, 150, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--sea-foam);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--coral);
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 1em;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .alert {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .alert-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .alert-error {
+            background: var(--error);
+            color: white;
+        }
+
+        .module-list {
+            margin-top: 30px;
+        }
+
+        .module-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .module-info h3 {
+            color: var(--sea-foam);
+            margin-bottom: 5px;
+        }
+
+        .module-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-edit {
+            background: var(--wave-blue);
+        }
+
+        .btn-delete {
+            background: var(--error);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--deep-blue);
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Learning Management</h1>
+            <button class="btn" onclick="showAddModuleForm()">Add New Module</button>
+        </div>
+
+        <div class="admin-section">
+            <div id="alertSuccess" class="alert alert-success"></div>
+            <div id="alertError" class="alert alert-error"></div>
+
+            <form id="moduleForm" style="display: none;">
+                <div class="form-group">
+                    <label for="pathwaySelect">Learning Pathway</label>
+                    <select id="pathwaySelect" class="form-control" required>
+                        <option value="">Select Pathway</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="moduleTitle">Module Title</label>
+                    <input type="text" id="moduleTitle" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="moduleDescription">Description</label>
+                    <textarea id="moduleDescription" class="form-control" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="contentType">Content Type</label>
+                    <select id="contentType" class="form-control" required>
+                        <option value="text">Text</option>
+                        <option value="video">Video</option>
+                        <option value="quiz">Quiz</option>
+                    </select>
+                </div>
+
+                <div id="contentSection" class="form-group">
+                    <label for="moduleContent">Content</label>
+                    <textarea id="moduleContent" class="form-control" required></textarea>
+                </div>
+
+                <div id="videoSection" class="form-group" style="display: none;">
+                    <label for="videoUrl">Video URL</label>
+                    <input type="url" id="videoUrl" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="orderNumber">Order Number</label>
+                    <input type="number" id="orderNumber" class="form-control" required min="1">
+                </div>
+
+                <div class="form-group">
+                    <label for="duration">Estimated Duration (minutes)</label>
+                    <input type="number" id="duration" class="form-control" required min="1">
+                </div>
+
+                <button type="submit" class="btn">Save Module</button>
+                <button type="button" class="btn" onclick="hideAddModuleForm()">Cancel</button>
+            </form>
+        </div>
+
+        <div class="module-list" id="moduleList">
+            <!-- Modules will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const moduleForm = document.getElementById('moduleForm');
+        const pathwaySelect = document.getElementById('pathwaySelect');
+        const contentType = document.getElementById('contentType');
+        const contentSection = document.getElementById('contentSection');
+        const videoSection = document.getElementById('videoSection');
+        const moduleList = document.getElementById('moduleList');
+        const alertSuccess = document.getElementById('alertSuccess');
+        const alertError = document.getElementById('alertError');
+
+        // Load pathways when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPathways();
+            loadModules();
+        });
+
+        // Show/Hide content sections based on content type
+        contentType.addEventListener('change', () => {
+            if (contentType.value === 'video') {
+                videoSection.style.display = 'block';
+                contentSection.style.display = 'none';
+            } else {
+                videoSection.style.display = 'none';
+                contentSection.style.display = 'block';
+            }
+        });
+
+        // Form submission
+        moduleForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                pathway_id: pathwaySelect.value,
+                title: document.getElementById('moduleTitle').value,
+                description: document.getElementById('moduleDescription').value,
+                content_type: contentType.value,
+                content: document.getElementById('moduleContent').value,
+                video_url: document.getElementById('videoUrl').value,
+                order_number: document.getElementById('orderNumber').value,
+                estimated_duration: document.getElementById('duration').value
+            };
+
+            try {
+                const response = await fetch('api/learning.php?action=add_module', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('success', 'Module added successfully!');
+                    moduleForm.reset();
+                    hideAddModuleForm();
+                    loadModules();
+                } else {
+                    showAlert('error', data.message || 'Error adding module');
+                }
+            } catch (error) {
+                showAlert('error', 'Error adding module');
+            }
+        });
+
+        // Load pathways
+        async function loadPathways() {
+            try {
+                const response = await fetch('api/learning.php?action=get_pathways');
+                const data = await response.json();
+
+                if (data.success) {
+                    pathwaySelect.innerHTML = '<option value="">Select Pathway</option>' +
+                        data.pathways.map(pathway => 
+                            `<option value="${pathway.id}">${pathway.title}</option>`
+                        ).join('');
+                }
+            } catch (error) {
+                showAlert('error', 'Error loading pathways');
+            }
+        }
+
+        // Load modules
+        async function loadModules() {
+            try {
+                const response = await fetch('api/learning.php?action=get_all_modules');
+                const data = await response.json();
+
+                if (data.success) {
+                    moduleList.innerHTML = data.modules.map(module => `
+                        <div class="module-item">
+                            <div class="module-info">
+                                <h3>${module.title}</h3>
+                                <p>${module.description}</p>
+                            </div>
+                            <div class="module-actions">
+                                <button class="btn btn-edit" onclick="editModule(${module.id})">Edit</button>
+                                <button class="btn btn-delete" onclick="deleteModule(${module.id})">Delete</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                showAlert('error', 'Error loading modules');
+            }
+        }
+
+        // Show/Hide form
+        function showAddModuleForm() {
+            moduleForm.style.display = 'block';
+        }
+
+        function hideAddModuleForm() {
+            moduleForm.style.display = 'none';
+        }
+
+        // Alert functions
+        function showAlert(type, message) {
+            const alert = type === 'success' ? alertSuccess : alertError;
+            alert.textContent = message;
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+
+        // Edit module
+        async function editModule(moduleId) {
+            try {
+                const response = await fetch(`api/learning.php?action=get_module&module_id=${moduleId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    showAddModuleForm();
+                    const module = data.module;
+                    
+                    document.getElementById('pathwaySelect').value = module.pathway_id;
+                    document.getElementById('moduleTitle').value = module.title;
+                    document.getElementById('moduleDescription').value = module.description;
+                    document.getElementById('contentType').value = module.content_type;
+                    document.getElementById('moduleContent').value = module.content;
+                    document.getElementById('videoUrl').value = module.video_url || '';
+                    document.getElementById('orderNumber').value = module.order_number;
+                    document.getElementById('duration').value = module.estimated_duration;
+                    
+                    // Update form display based on content type
+                    contentType.dispatchEvent(new Event('change'));
+                }
+            } catch (error) {
+                showAlert('error', 'Error loading module');
+            }
+        }
+
+        // Delete module
+        async function deleteModule(moduleId) {
+            if (confirm('Are you sure you want to delete this module?')) {
+                try {
+                    const response = await fetch(`api/learning.php?action=delete_module&module_id=${moduleId}`, {
+                        method: 'DELETE'
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        showAlert('success', 'Module deleted successfully!');
+                        loadModules();
+                    } else {
+                        showAlert('error', data.message || 'Error deleting module');
+                    }
+                } catch (error) {
+                    showAlert('error', 'Error deleting module');
+                }
+            }
+        }
+    </script>
+</body>
+</html> 
