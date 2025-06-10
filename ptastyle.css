@@ -1,0 +1,423 @@
+/* Global Styles */
+:root {
+    --primary: #0077cc;
+    --secondary: #00b4d8;
+    --dark: #1a2a3a;
+    --light: #f5f9fc;
+    --white: #ffffff;
+    --shadow: 0 2px 5px rgba(0,0,0,0.1);
+    --border: 1px solid #ccc;
+    --font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--light);
+    color: var(--dark);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Utility Classes */
+.text-center {
+    text-align: center;
+}
+
+.text-primary {
+    color: var(--primary);
+}
+
+.btn {
+    padding: 0.8rem 1.5rem;
+    background-color: var(--primary);
+    color: var(--white);
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: var(--secondary);
+    transition: background-color 0.3s ease;
+}
+
+/* Page Layouts */
+
+/* Login & Forgot Password */
+.auth-container {
+    max-width: 400px;
+    margin: 5rem auto;
+    padding: 2rem;
+    background-color: var(--white);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.auth-container h2 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.auth-container input {
+    width: 90%;
+    padding: 0.8rem;
+    margin: 1rem 0;
+    border: var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.auth-container button {
+    width: 95%;
+    padding: 0.8rem;
+    background-color: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.auth-container a {
+    display: block;
+    margin-top: 1rem;
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+/* Home Page Layout */
+.mobile-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--white);
+    box-shadow: var(--shadow);
+    z-index: 1000;
+}
+
+.mobile-header .logo {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--primary);
+}
+
+.menu-toggle, .search-toggle {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--dark);
+    cursor: pointer;
+}
+
+.mobile-nav {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background-color: var(--white);
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    z-index: 1001;
+    transition: left 0.3s ease;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.mobile-nav.active {
+    left: 0;
+}
+
+.mobile-nav a {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 0;
+    text-decoration: none;
+    color: var(--dark);
+    border-bottom: 1px solid #eee;
+}
+
+.mobile-nav a i {
+    margin-right: 1rem;
+    width: 1.5rem;
+    text-align: center;
+    color: var(--primary);
+}
+
+.mobile-nav a.active {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.mobile-content {
+    padding: 5rem 1rem 4rem;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+/* Quick Links */
+.quick-links h2 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.link-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.link-card {
+    background-color: var(--white);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    text-decoration: none;
+    color: var(--dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.link-card i {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+/* News Section */
+.latest-news h2 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.news-card {
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.news-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.news-card h3 {
+    padding: 0.8rem 0.8rem 0;
+    font-size: 1rem;
+}
+
+.news-card p {
+    padding: 0 0.8rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.news-card a {
+    display: inline-block;
+    padding: 0.8rem;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+    background-color: var(--white);
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    z-index: 1000;
+    padding: 0.5rem 0;
+}
+
+.bottom-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.bottom-nav a i {
+    font-size: 1.2rem;
+    margin-bottom: 0.2rem;
+}
+
+.bottom-nav a.active {
+    color: var(--primary);
+}
+
+/* Community Pages */
+.community-container {
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 1rem;
+}
+
+.community-container h2 {
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 2rem;
+}
+
+.community-card {
+    background-color: var(--white);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+}
+
+.community-card a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.community-card a:hover {
+    text-decoration: underline;
+}
+
+/* Learn Page */
+/* Learn / Beginners Guide */
+.learn-container {
+    max-width: 1000px;
+    margin: 3rem auto;
+    padding: 2rem;
+    background-color: var(--white);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.learn-container h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+.learn-item {
+    background-color: var(--white);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.learn-item:hover {
+    transform: scale(1.05);
+}
+
+.learn-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.learn-item p {
+    font-size: 1rem;
+    color: #666;
+}
+
+.learn-item a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.learn-item a:hover {
+    text-decoration: underline;
+}
+
+.learn-item video {
+    width: 100%;
+    height: auto;
+    margin-top: 1rem;
+    border-radius: 8px;
+}
+
+
+/* Responsive Adjustments */
+@media (min-width: 768px) {
+    .mobile-content {
+        padding: 6rem 2rem 4rem;
+    }
+    
+    .link-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .community-container {
+        max-width: 1400px;
+    }
+}
+/* Fish Species / Fishing Tools */
+.fish-container {
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 2rem;
+}
+
+.fish-species, .fishing-tools {
+    margin-bottom: 2rem;
+}
+
+.fish-item, .tool-item {
+    background-color: var(--white);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.fish-item:hover, .tool-item:hover {
+    transform: scale(1.05);
+}
+
+.fish-item h3, .tool-item h3 {
+    font-size: 1.5rem;
+    color: var(--dark);
+    margin-bottom: 1rem;
+}
+
+.fish-item p, .tool-item p {
+    font-size: 1rem;
+    color: #666;
+}
+
+.fish-item a, .tool-item a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.fish-item a:hover, .tool-item a:hover {
+    text-decoration: underline;
+}
+

@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fish Dictionary - Master Fisher</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Ocean Theme Styles */
+        :root {
+            --deep-blue: #005f73;
+            --ocean-teal: #0a9396;
+            --wave-blue: #94d2bd;
+            --sea-foam: #e9d8a6;
+            --coral: #ee9b00;
+            --sunset-orange: #ca6702;
+            --deep-sea: #001219;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--deep-blue), var(--deep-sea));
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+            touch-action: manipulation;
+        }
+
+        .mobile-header {
+            background-color: rgba(0, 95, 115, 0.9);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            color: var(--sea-foam);
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .menu-toggle, .search-toggle {
+            background: none;
+            border: none;
+            color: var(--sea-foam);
+            font-size: 1.2rem;
+            margin-left: 1rem;
+            cursor: pointer;
+        }
+
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: rgba(10, 147, 150, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 200;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .mobile-nav.active {
+            left: 0;
+        }
+
+        .mobile-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-nav a i {
+            margin-right: 1rem;
+            width: 1.5rem;
+            text-align: center;
+        }
+
+        .mobile-nav a:hover {
+            background-color: rgba(148, 210, 189, 0.3);
+            transform: translateX(5px);
+        }
+
+        .close-menu {
+            align-self: flex-end;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+
+        .auth-links {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 1rem 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--coral);
+            color: var(--deep-sea);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:active {
+            background-color: var(--sunset-orange);
+            transform: translateY(1px);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-content {
+            padding: 1rem;
+            padding-bottom: 70px;
+        }
+
+        .page-header {
+            background: rgba(10, 147, 150, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(148, 210, 189, 0.2);
+        }
+
+        .page-header h1 {
+            color: var(--sea-foam);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 18, 25, 0.98);
+            display: flex;
+            justify-content: space-around;
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .bottom-nav a {
+            color: var(--sea-foam);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+
+        .bottom-nav a i {
+            font-size: 1.4rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .bottom-nav a.active {
+            color: var(--coral);
+            font-weight: 500;
+        }
+
+        /* Fish Dictionary Specific Styles */
+        .fish-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .fish-card {
+            background: rgba(10, 147, 150, 0.3);
+            border-radius: 15px;
+            padding: 1rem;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(148, 210, 189, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .fish-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .fish-card-header h3 {
+            color: var(--sea-foam);
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .fish-card-header i {
+            transition: transform 0.3s ease;
+            color: var(--sea-foam);
+        }
+
+        .fish-card.active .fish-card-header i {
+            transform: rotate(180deg);
+        }
+
+        .fish-card-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 0.5rem;
+        }
+
+        .fish-card.active .fish-card-content {
+            max-height: 500px;
+            padding: 0.5rem;
+        }
+
+        .fish-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+        }
+
+        .fish-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .fish-detail {
+            background: rgba(148, 210, 189, 0.2);
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .fish-detail-label {
+            font-size: 0.8rem;
+            color: var(--wave-blue);
+        }
+
+        .fish-detail-value {
+            font-weight: bold;
+        }
+
+        .fish-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .fish-actions .btn {
+            flex: 1;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .search-container {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.5rem;
+            border-radius: 50px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            font-family: inherit;
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--deep-sea);
+        }
+
+        /* Fish animation elements */
+        .fish-animation {
+            position: absolute;
+            width: 40px;
+            height: 25px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        @keyframes swim {
+            0% { transform: translateX(-100px) rotateY(0deg); }
+            100% { transform: translateX(calc(100vw + 100px)) rotateY(0deg); }
+        }
+
+        @keyframes swimReverse {
+            0% { transform: translateX(calc(100vw + 100px)) rotateY(180deg); }
+            100% { transform: translateX(-100px) rotateY(180deg); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            50% { opacity: 0.6; }
+            100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .item-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 1.5rem 1rem 1rem 1rem;
+            text-align: center;
+            transition: box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .item-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        .item-img {
+            width: 100%;
+            max-width: 220px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .item-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--coral);
+            margin-bottom: 0.5rem;
+        }
+        .item-desc {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s;
+            margin-bottom: 0;
+            pointer-events: none;
+        }
+        .item-card.open .item-desc {
+            max-height: 200px;
+            opacity: 1;
+            margin-bottom: 1rem;
+            pointer-events: auto;
+        }
+        .item-btn {
+            background: var(--coral);
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            padding: 0.7rem 2.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: auto;
+        }
+        .item-btn:hover {
+            background: var(--sunset-orange);
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        <div class="logo" onclick="window.location.href='ptahome.html'">Master Fisher</div>
+        <div>
+            <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav" id="mobileNav">
+        <div class="close-menu" id="closeMenu"><i class="fas fa-times"></i></div>
+        <a href="fish.html" class="active"><i class="fas fa-fish"></i> Fish</a>
+        <a href="identify.html"><i class="fas fa-search"></i> Identify</a>
+        <a href="learn.html"><i class="fas fa-book-open"></i> Learn</a>
+        <a href="forum.html"><i class="fas fa-comments"></i> Forum</a>
+        <div class="auth-links">
+            <a href="ptalogin.html" class="btn">Login</a>
+            <a href="register.html" class="btn btn-primary">Register</a>
+        </div>
+    </nav>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Main Content -->
+    <main class="mobile-content">
+        <section class="page-header">
+            <h1>Fish Dictionary</h1>
+            <p>Explore information about different fish species</p>
+        </section>
+
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search fish species..." id="fishSearch">
+        </div>
+
+        <div class="card-grid">
+            <div class="item-card">
+                <img src="bluegillsunfish.jpeg" alt="Bluegill Sunfish" class="item-img">
+                <div class="item-title">Bluegill Sunfish</div>
+                <button class="item-btn" onclick="toggleDesc(this)">Learn More</button>
+                <div class="item-desc">A popular panfish found throughout North America. Known for their blue gill covers and dark spots.</div>
+            </div>
+            <div class="item-card">
+                <img src="largemouthbass.jpeg" alt="Largemouth Bass" class="item-img">
+                <div class="item-title">Largemouth Bass</div>
+                <button class="item-btn" onclick="toggleDesc(this)">Learn More</button>
+                <div class="item-desc">A popular game fish known for its aggressive strikes and large mouth that extends past the eye.</div>
+            </div>
+            <div class="item-card">
+                <img src="rainbowtrout.jpeg" alt="Rainbow Trout" class="item-img">
+                <div class="item-title">Rainbow Trout</div>
+                <button class="item-btn" onclick="toggleDesc(this)">Learn More</button>
+                <div class="item-desc">Known for their beautiful coloration and fighting spirit. Native to the Pacific coast but introduced worldwide.</div>
+            </div>
+            <div class="item-card">
+                <img src="channelcatfish.jpeg" alt="Channel Catfish" class="item-img">
+                <div class="item-title">Channel Catfish</div>
+                <button class="item-btn" onclick="toggleDesc(this)">Learn More</button>
+                <div class="item-desc">Popular among anglers for their size and fighting ability. Identified by their forked tail and dark spots.</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="ptahome.html"><i class="bi bi-house"></i>Home</a>
+        <a href="fish.html" class="active"><i class="bi bi-water"></i>Fish</a>
+        <a href="learning.html"><i class="bi bi-book"></i>Learn</a>
+        <a href="community.html"><i class="bi bi-people"></i>Community</a>
+        <a href="profile.html"><i class="bi bi-person"></i>Profile</a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Menu Toggle Functionality
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileNav = document.getElementById('mobileNav');
+        const overlay = document.getElementById('overlay');
+        const closeMenu = document.getElementById('closeMenu');
+
+        menuToggle.addEventListener('click', () => {
+            mobileNav.classList.add('active');
+            overlay.classList.add('active');
+        });
+
+        closeMenu.addEventListener('click', () => {
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // Fish Card Toggle Functionality
+        function toggleFishCard(card) {
+            card.classList.toggle('active');
+        }
+
+        // Search Functionality
+        const fishSearch = document.getElementById('fishSearch');
+        const fishContainer = document.getElementById('fishContainer');
+        const fishCards = fishContainer.getElementsByClassName('fish-card');
+
+        fishSearch.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            Array.from(fishCards).forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                if (title.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Create decorative fish and bubbles
+        function createFish() {
+            const fish = document.createElement('div');
+            fish.className = 'fish-animation';
+            
+            const startY = Math.random() * window.innerHeight;
+            const duration = 15 + Math.random() * 30;
+            const delay = Math.random() * 15;
+            const size = 20 + Math.random() * 30;
+            const direction = Math.random() > 0.5 ? 'normal' : 'reverse';
+            
+            fish.style.width = `${size}px`;
+            fish.style.height = `${size * 0.6}px`;
+            fish.style.top = `${startY}px`;
+            fish.style.animation = `${direction === 'normal' ? 'swim' : 'swimReverse'} ${duration}s linear ${delay}s infinite`;
+            
+            fish.innerHTML = `
+                <svg viewBox="0 0 100 60" width="100%" height="100%">
+                    <path fill="${getRandomFishColor()}" d="M10,30 Q30,10 50,30 Q70,50 90,30 Q70,55 50,30 Q30,5 10,30" />
+                    <path fill="${getRandomTailColor()}" d="M90,30 L100,20 L100,40 Z" />
+                    <circle cx="25" cy="25" r="3" fill="white" />
+                    <circle cx="25" cy="25" r="1" fill="#001219" />
+                </svg>
+            `;
+            
+            document.body.appendChild(fish);
+        }
+        
+        function getRandomFishColor() {
+            const colors = ['#94d2bd', '#0a9396', '#ee9b00', '#ca6702', '#e9d8a6'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        function getRandomTailColor() {
+            const colors = ['#ee9b00', '#ca6702', '#bb3e03', '#ae2012', '#9b2226'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        function createBubble() {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            
+            const size = 3 + Math.random() * 10;
+            const left = Math.random() * window.innerWidth;
+            const duration = 8 + Math.random() * 15;
+            const delay = Math.random() * 8;
+            
+            bubble.style.width = `${size}px`;
+            bubble.style.height = `${size}px`;
+            bubble.style.left = `${left}px`;
+            bubble.style.bottom = '0';
+            bubble.style.animation = `float ${duration}s ease-in ${delay}s infinite`;
+            
+            document.body.appendChild(bubble);
+        }
+        
+        // Create decorative elements
+        for (let i = 0; i < 3; i++) createFish();
+        for (let i = 0; i < 8; i++) createBubble();
+
+        window.toggleDesc = function(btn) {
+            const card = btn.closest('.item-card');
+            // Close all cards first
+            document.querySelectorAll('.item-card.open').forEach(c => {
+                if (c !== card) c.classList.remove('open');
+                // Also reset button text
+                c.querySelector('.item-btn').textContent = 'Learn More';
+            });
+            // Toggle the clicked card
+            const isOpen = card.classList.toggle('open');
+            btn.textContent = isOpen ? 'Show Less' : 'Learn More';
+        };
+    </script>
+</body>
+</html>

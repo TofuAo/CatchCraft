@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community - Master Fisher</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="common.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, var(--deep-blue), var(--deep-sea));
+            color: white;
+            min-height: 100vh;
+        }
+
+        .post-card {
+            background: rgba(10, 147, 150, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(148, 210, 189, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .post-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .post-title {
+            font-size: 1.2rem;
+            color: var(--sea-foam);
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: var(--wave-blue);
+        }
+
+        .post-content {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 1rem;
+            color: var(--wave-blue);
+            font-size: 0.9rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--wave-blue);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: rgba(148, 210, 189, 0.2);
+        }
+
+        .action-btn.liked {
+            color: var(--coral);
+        }
+
+        .create-post {
+            background: var(--coral);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 999;
+        }
+
+        .create-post:hover {
+            background: var(--sunset-orange);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .post-card {
+                padding: 1rem;
+            }
+        }
+
+        .settings-toggle {
+            background: rgba(10, 147, 150, 0.2);
+            border-radius: 50%;
+            padding: 0.5rem;
+            border: none;
+            color: var(--sea-foam);
+            transition: background 0.2s;
+        }
+        .settings-toggle:hover {
+            background: var(--coral);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h1 class="text-center mb-0">Community</h1>
+            </div>
+        </div>
+
+        <div id="postsContainer">
+            <div class="text-center p-4">
+                <div class="loading-spinner"></div>
+                <p class="mt-3">Loading posts...</p>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="ptahome.html"><i class="bi bi-house"></i>Home</a>
+        <a href="fish.html"><i class="bi bi-water"></i>Fish</a>
+        <a href="learning.html"><i class="bi bi-book"></i>Learn</a>
+        <a href="forum.html" class="active"><i class="bi bi-chat"></i>Forum</a>
+        <a href="profile.html"><i class="bi bi-person"></i>Profile</a>
+    </nav>
+
+    <!-- Fish News Modal -->
+    <div class="modal fade" id="fishNewsModal" tabindex="-1" aria-labelledby="fishNewsModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content" style="color: #222;">
+          <div class="modal-header">
+            <h5 class="modal-title" id="fishNewsModalLabel">Fish News</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="fishNewsContent">
+            <!-- News will be inserted here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS FIRST -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Your custom JS AFTER -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPosts();
+            checkUserStatus();
+        });
+
+        function checkUserStatus() {
+            fetch('api/check_session.php')
+                .then(response => response.json())
+                .then(data => {
+                    const createPostBtn = document.getElementById('createPostBtn');
+                    if (data.success) {
+                        createPostBtn.style.display = 'block';
+                    } else {
+                        createPostBtn.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking user status:', error);
+                });
+        }
+
+        function handleCreatePost() {
+            fetch('api/check_session.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = 'create-post.html';
+                    } else {
+                        window.location.href = 'ptalogin.html';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    window.location.href = 'ptalogin.html';
+                });
+        }
+
+        function loadPosts() {
+            fetch('api/community.php?action=get_posts')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayPosts(data.posts);
+                    } else {
+                        showError(data.message || 'Failed to load posts');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showError('Failed to load posts');
+                });
+        }
+
+        function displayPosts(posts) {
+            const container = document.getElementById('postsContainer');
+            
+            if (!posts || posts.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center p-4">
+                        <i class="bi bi-chat-dots fs-1 mb-3"></i>
+                        <p>No posts yet. Be the first to share!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = posts.map(post => `
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="user-info">
+                            <div class="avatar">${post.username[0].toUpperCase()}</div>
+                            <div>
+                                <div class="username">${post.username}</div>
+                                <div class="timestamp">${formatDate(post.created_at)}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-content">${post.content}</div>
+                    ${post.image_url ? `<img src="${post.image_url}" class="post-image" alt="Post image">` : ''}
+                    <div class="post-actions">
+                        <button onclick="handleLike(${post.id})" class="btn-action ${post.user_liked ? 'liked' : ''}">
+                            <i class="bi bi-heart${post.user_liked ? '-fill' : ''}"></i>
+                            <span>${post.like_count}</span>
+                        </button>
+                        <button onclick="showComments(${post.id})" class="btn-action">
+                            <i class="bi bi-chat"></i>
+                            <span>${post.comment_count}</span>
+                        </button>
+                    </div>
+                    ${post.recent_comments && post.recent_comments.length > 0 ? `
+                        <div class="recent-comments">
+                            ${post.recent_comments.map(comment => `
+                                <div class="comment">
+                                    <span class="comment-username">${comment.username}:</span>
+                                    <span class="comment-content">${comment.content}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function handleLike(postId) {
+            fetch('api/check_session.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        toggleLike(postId);
+                    } else {
+                        window.location.href = 'ptalogin.html';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    window.location.href = 'ptalogin.html';
+                });
+        }
+
+        function toggleLike(postId) {
+            fetch('api/community.php?action=toggle_like', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ post_id: postId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadPosts(); // Reload posts to update likes
+                } else {
+                    showError(data.message || 'Failed to update like');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('Failed to update like');
+            });
+        }
+
+        function showComments(postId) {
+            window.location.href = `comments.html?post=${postId}`;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            const day = 24 * 60 * 60 * 1000;
+            
+            if (diff < day) {
+                return 'Today at ' + date.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } else if (diff < 2 * day) {
+                return 'Yesterday at ' + date.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } else {
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+        }
+
+        function showError(message) {
+            const container = document.getElementById('postsContainer');
+            container.innerHTML = `
+                <div class="text-center p-4">
+                    <i class="bi bi-exclamation-circle fs-1 mb-3"></i>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        function showRandomFishNews() {
+            const news = [
+                "Scientists have discovered a new species of deep-sea anglerfish in the Pacific Ocean.",
+                "A record-breaking tuna was caught off the coast of Japan, weighing over 600 pounds!",
+                "Coral reefs are seeing a resurgence in fish populations thanks to new conservation efforts.",
+                "The annual salmon run has begun, drawing thousands of fishers to the rivers.",
+                "Researchers are studying how climate change is affecting migratory patterns of ocean fish."
+            ];
+            const randomNews = news[Math.floor(Math.random() * news.length)];
+            document.getElementById('fishNewsContent').textContent = randomNews;
+            var myModal = new bootstrap.Modal(document.getElementById('fishNewsModal'));
+            myModal.show();
+        }
+    </script>
+</body>
+</html>

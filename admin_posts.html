@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Posts - Fishing Master</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .post-card {
+            transition: transform 0.2s;
+            margin-bottom: 20px;
+        }
+        .post-card:hover {
+            transform: translateY(-5px);
+        }
+        .post-image {
+            max-height: 300px;
+            object-fit: cover;
+        }
+        .like-button {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .like-button.liked {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <h1 class="text-center mb-5">Admin Announcements</h1>
+        <div id="postsContainer" class="row">
+            <!-- Posts will be loaded here -->
+        </div>
+    </div>
+
+    <template id="postTemplate">
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card post-card shadow-sm">
+                <img class="card-img-top post-image" src="" alt="Post image">
+                <div class="card-body">
+                    <h5 class="card-title"></h5>
+                    <p class="card-text content"></p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted author"></small>
+                        <small class="text-muted date"></small>
+                    </div>
+                    <div class="mt-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="like-button" role="button">
+                                ❤️ <span class="like-count"></span>
+                            </span>
+                            <span class="ms-3">
+                                💬 <span class="comment-count"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAdminPosts();
+        });
+
+        function loadAdminPosts() {
+            fetch('get_admin_posts.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayPosts(data.posts);
+                    } else {
+                        alert(data.message || 'Error loading posts');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading posts');
+                });
+        }
+
+        function displayPosts(posts) {
+            const container = document.getElementById('postsContainer');
+            const template = document.getElementById('postTemplate');
+            container.innerHTML = '';
+
+            posts.forEach(post => {
+                const postElement = template.content.cloneNode(true);
+                
+                // Set post content
+                const img = postElement.querySelector('.post-image');
+                if (post.image_url) {
+                    img.src = post.image_url;
+                } else {
+                    img.style.display = 'none';
+                }
+
+                postElement.querySelector('.card-title').textContent = post.title;
+                postElement.querySelector('.content').innerHTML = post.content;
+                postElement.querySelector('.author').textContent = `Posted by ${post.author}`;
+                postElement.querySelector('.date').textContent = post.created_at;
+                postElement.querySelector('.like-count').textContent = post.like_count;
+                postElement.querySelector('.comment-count').textContent = post.comment_count;
+
+                const likeButton = postElement.querySelector('.like-button');
+                if (post.user_has_liked) {
+                    likeButton.classList.add('liked');
+                }
+
+                likeButton.addEventListener('click', () => toggleLike(post.id, likeButton));
+                
+                container.appendChild(postElement);
+            });
+        }
+
+        function toggleLike(postId, button) {
+            fetch('toggle_like.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `post_id=${postId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const likeCount = button.querySelector('.like-count');
+                    button.classList.toggle('liked');
+                    likeCount.textContent = data.like_count;
+                } else {
+                    alert(data.message || 'Error updating like');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating like');
+            });
+        }
+    </script>
+</body>
+</html> 

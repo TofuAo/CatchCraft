@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Master Fisher - From Novice to Master</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --deep-blue: #005f73;
+            --ocean-teal: #0a9396;
+            --wave-blue: #94d2bd;
+            --sea-foam: #e9d8a6;
+            --coral: #ee9b00;
+            --sunset-orange: #ca6702;
+            --deep-sea: #001219;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--deep-blue), var(--deep-sea));
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+            touch-action: manipulation;
+        }
+
+        /* Mobile Header */
+        .mobile-header {
+            background-color: rgba(0, 95, 115, 0.9);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            color: var(--sea-foam);
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .menu-toggle, .search-toggle {
+            background: none;
+            border: none;
+            color: var(--sea-foam);
+            font-size: 1.2rem;
+            margin-left: 1rem;
+            cursor: pointer;
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: rgba(10, 147, 150, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 200;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .mobile-nav.active {
+            left: 0;
+        }
+
+        .mobile-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-nav a i {
+            margin-right: 1rem;
+            width: 1.5rem;
+            text-align: center;
+        }
+
+        .mobile-nav a:hover {
+            background-color: rgba(148, 210, 189, 0.3);
+            transform: translateX(5px);
+        }
+
+        .close-menu {
+            align-self: flex-end;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+
+        .auth-links {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 1rem 0;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--coral);
+            color: var(--deep-sea);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:active {
+            background-color: var(--sunset-orange);
+            transform: translateY(1px);
+        }
+
+        /* Search Overlay */
+        .mobile-search {
+            position: fixed;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 95, 115, 0.95);
+            z-index: 150;
+            padding: 1rem;
+            transition: top 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .mobile-search.active {
+            top: 0;
+        }
+
+        .search-container {
+            display: flex;
+            margin-top: 3rem;
+        }
+
+        .search-container input {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 50px 0 0 50px;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .search-container button {
+            background-color: var(--coral);
+            color: var(--deep-sea);
+            border: none;
+            padding: 0 1.2rem;
+            border-radius: 0 50px 50px 0;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Main Content */
+        .mobile-content {
+            padding: 1rem;
+            padding-bottom: 70px; /* Space for bottom nav */
+        }
+
+        .welcome-banner {
+            background: rgba(10, 147, 150, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(148, 210, 189, 0.2);
+        }
+
+        .welcome-banner h1 {
+            color: var(--sea-foam);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .welcome-banner p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Quick Links */
+        .quick-links {
+            margin-bottom: 1.5rem;
+        }
+
+        .quick-links h2 {
+            color: var(--sea-foam);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .link-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .link-card {
+            background: rgba(148, 210, 189, 0.2);
+            border-radius: 10px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .link-card:active {
+            transform: scale(0.98);
+            background: rgba(148, 210, 189, 0.3);
+        }
+
+        .link-card i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--sea-foam);
+        }
+
+        /* Latest News */
+        .latest-news h2 {
+            color: var(--sea-foam);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .news-card {
+            background: rgba(10, 147, 150, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(148, 210, 189, 0.2);
+        }
+
+        .news-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .news-card h3 {
+            padding: 1rem 1rem 0;
+            color: var(--sea-foam);
+        }
+
+        .news-card p {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .news-card a {
+            display: inline-block;
+            padding: 0.5rem 1rem 1rem;
+            color: var(--coral);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 18, 25, 0.98);
+            display: flex;
+            justify-content: space-around;
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .bottom-nav a {
+            color: var(--sea-foam);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.8rem;
+            padding: 0.3rem 0.5rem;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .bottom-nav a:active {
+            background-color: rgba(148, 210, 189, 0.3);
+        }
+
+        .bottom-nav a i {
+            font-size: 1.3rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .bottom-nav a.active {
+            color: var(--coral);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: var(--wave-blue);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        /* Fish animation elements */
+        .fish {
+            position: absolute;
+            width: 40px;
+            height: 25px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        @keyframes swim {
+            0% { transform: translateX(-100px) rotateY(0deg); }
+            100% { transform: translateX(calc(100vw + 100px)) rotateY(0deg); }
+        }
+
+        @keyframes swimReverse {
+            0% { transform: translateX(calc(100vw + 100px)) rotateY(180deg); }
+            100% { transform: translateX(-100px) rotateY(180deg); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            50% { opacity: 0.6; }
+            100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+        }
+
+        /* Settings Popup Styles */
+        .settings-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .settings-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-settings {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .settings-section {
+            margin-bottom: 20px;
+        }
+
+        .settings-section h3 {
+            color: #0077cc;
+            margin-bottom: 10px;
+        }
+
+        .language-select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .profile-field {
+            margin-bottom: 15px;
+        }
+
+        .profile-field label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .profile-field input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .save-btn {
+            background: #0077cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .save-btn:hover {
+            background: #005fa3;
+        }
+
+        .password-reset-section {
+            text-align: center;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+        }
+
+        .password-reset-btn {
+            background: none;
+            border: none;
+            color: #0077cc;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        <button class="menu-toggle" id="menuToggle" aria-label="Open Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="logo">Master Fisher</div>
+        <div>
+            <button class="settings-toggle" onclick="openSettings()" aria-label="Settings" style="font-size: 1.7rem; background: rgba(10, 147, 150, 0.2); border-radius: 50%; padding: 0.5rem; border: none; color: var(--sea-foam); transition: background 0.2s;">
+                <i class="fas fa-cog"></i>
+            </button>
+            <button class="search-toggle" id="searchToggle" aria-label="Search">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav" id="mobileNav">
+        <div class="close-menu" id="closeMenu"><i class="fas fa-times"></i></div>
+        <a href="fish.html"><i class="fas fa-fish"></i> Fish</a>
+        <a href="#news"><i class="fas fa-newspaper"></i> News</a>
+        <a href="learn.html"><i class="fas fa-book-open"></i> Learn</a>
+        <a href="forum.html"><i class="fas fa-comments"></i> Forum</a>
+        <a href="contact.html"><i class="fas fa-envelope"></i> Contact Us</a>
+        <div class="auth-links">
+            <a href="ptalogin.html" class="btn">Login</a>
+            <a href="ptaregister.html" class="btn btn-primary">Register</a>
+        </div>
+    </nav>
+
+    <!-- Search Overlay -->
+    <div class="mobile-search" id="mobileSearch">
+        <div class="search-container">
+            <input type="text" placeholder="Search...">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Main Content -->
+    <main class="mobile-content" style="display: none;">
+        <section class="welcome-banner">
+            <h1>Welcome, <span id="username"></span>!</h1>
+            <p>Ready to continue your fishing journey?</p>
+            <button class="btn btn-primary" onclick="checkAndGoToLearning()">Start Learning</button>
+            <button class="btn btn-secondary" style="margin-left: 10px; background: var(--ocean-teal); color: white;" onclick="window.location.href='learning.html'">Go to Learning Page</button>
+        </section>
+
+        <section class="quick-links">
+            <h2>Explore Features</h2>
+            <div class="link-grid">
+                <a href="learn.html" class="link-card">
+                    <i class="fas fa-book-reader"></i>
+                    <span>Fish Guide</span>
+                </a>
+                <a href="fish.html" class="link-card">
+                    <i class="fas fa-fish"></i>
+                    <span>Fish Species</span>
+                </a>
+                <a href="learning.html" class="link-card">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Learning Paths</span>
+                </a>
+                <a href="tools.html" class="link-card">
+                    <i class="fas fa-toolbox"></i>
+                    <span>Fishing Tools</span>
+                </a>
+                <a href="community.html" class="link-card">
+                    <i class="fas fa-comments"></i>
+                    <span>Community</span>
+                </a>
+            </div>
+        </section>
+
+        <section class="latest-news" id="news">
+            <h2>Latest News</h2>
+            <div class="news-card">
+                <img src="fishnews.jpeg" alt="News Image">
+                <h3>Best Fishing Spots in 2025</h3>
+                <p>Discover the top places to fish this year, from rivers to coastal areas...</p>
+                <a href="#" onclick="showRandomFishNews(); return false;">Read More</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="ptahome.html" class="active"><i class="fas fa-home"></i>Home</a>
+        <a href="fish.html"><i class="fas fa-fish"></i>Fish</a>
+        <a href="learn.html"><i class="fas fa-book"></i>Learn</a>
+        <a href="community.html"><i class="fas fa-comments"></i>Community</a>
+    </nav>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2025 Master Fisher. All rights reserved.
+    </footer>
+
+    <!-- Settings Popup -->
+    <div class="settings-popup" id="settingsPopup">
+        <div class="settings-content">
+            <div class="settings-header">
+                <h2>Settings</h2>
+                <button class="close-settings" onclick="closeSettings()">&times;</button>
+            </div>
+            
+            <div class="settings-section">
+                <h3>Language</h3>
+                <select class="language-select" id="language">
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                </select>
+            </div>
+
+            <div class="settings-section">
+                <h3>Profile Information</h3>
+                <form id="profileForm">
+                    <div class="profile-field">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" readonly>
+                    </div>
+                    <div class="profile-field">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email">
+                    </div>
+                    <div class="profile-field">
+                        <label for="fullname">Full Name</label>
+                        <input type="text" id="fullname" name="fullname">
+                    </div>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </form>
+            </div>
+
+            <div class="password-reset-section">
+                <button class="password-reset-btn" onclick="requestPasswordReset()">
+                    Request Password Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fish News Modal -->
+    <div class="modal fade" id="fishNewsModal" tabindex="-1" aria-labelledby="fishNewsModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content" style="color: #222;">
+          <div class="modal-header">
+            <h5 class="modal-title" id="fishNewsModalLabel">Fish News</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="fishNewsContent">
+            <!-- News will be inserted here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Check session status when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSession();
+        });
+
+        function checkSession() {
+            fetch('check_session.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        // Redirect to login if not authenticated
+                        window.location.href = 'ptalogin.html';
+                    } else {
+                        // Update UI with username
+                        document.getElementById('username').textContent = data.user.username;
+                        document.querySelector('.mobile-content').style.display = 'block';
+                        
+                        // Add admin navigation if user is admin
+                        if (data.user.is_admin) {
+                            // Add admin dashboard link to mobile navigation
+                            const adminLink = document.createElement('a');
+                            adminLink.href = 'admin_dashboard.html';
+                            adminLink.innerHTML = '<i class="fas fa-cog"></i> Admin Dashboard';
+                            
+                            // Insert before the auth-links div
+                            const authLinks = document.querySelector('.auth-links');
+                            document.querySelector('.mobile-nav').insertBefore(adminLink, authLinks);
+                            
+                            // Add admin indicator to the welcome banner
+                            const welcomeText = document.querySelector('.welcome-banner p');
+                            welcomeText.innerHTML = 'Welcome to your admin account! You have access to both user and admin features.';
+                            
+                            // Add admin dashboard to quick links
+                            const linkGrid = document.querySelector('.link-grid');
+                            const adminCard = document.createElement('a');
+                            adminCard.href = 'admin_dashboard.html';
+                            adminCard.className = 'link-card';
+                            adminCard.innerHTML = `
+                                <i class="fas fa-cog"></i>
+                                <span>Admin Dashboard</span>
+                            `;
+                            linkGrid.appendChild(adminCard);
+
+                            // Add admin dashboard to bottom navigation
+                            const bottomNav = document.querySelector('.bottom-nav');
+                            const adminNavLink = document.createElement('a');
+                            adminNavLink.href = 'admin_dashboard.html';
+                            adminNavLink.innerHTML = '<i class="fas fa-cog"></i>Admin';
+                            bottomNav.appendChild(adminNavLink);
+                        }
+
+                        // Update auth links
+                        const authLinks = document.querySelector('.auth-links');
+                        authLinks.innerHTML = `
+                            <a href="#" onclick="logout()" class="btn">Logout</a>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    window.location.href = 'ptalogin.html';
+                });
+        }
+
+        // Create fish elements
+        function createFish() {
+            const fish = document.createElement('div');
+            fish.className = 'fish';
+            
+            const startY = Math.random() * window.innerHeight;
+            const duration = 15 + Math.random() * 30;
+            const delay = Math.random() * 15;
+            const size = 20 + Math.random() * 30;
+            const direction = Math.random() > 0.5 ? 'normal' : 'reverse';
+            
+            fish.style.width = `${size}px`;
+            fish.style.height = `${size * 0.6}px`;
+            fish.style.top = `${startY}px`;
+            fish.style.animation = `${direction === 'normal' ? 'swim' : 'swimReverse'} ${duration}s linear ${delay}s infinite`;
+            
+            fish.innerHTML = `
+                <svg viewBox="0 0 100 60" width="100%" height="100%">
+                    <path fill="${getRandomFishColor()}" d="M10,30 Q30,10 50,30 Q70,50 90,30 Q70,55 50,30 Q30,5 10,30" />
+                    <path fill="${getRandomTailColor()}" d="M90,30 L100,20 L100,40 Z" />
+                    <circle cx="25" cy="25" r="3" fill="white" />
+                    <circle cx="25" cy="25" r="1" fill="#001219" />
+                </svg>
+            `;
+            
+            document.body.appendChild(fish);
+        }
+        
+        function getRandomFishColor() {
+            const colors = ['#94d2bd', '#0a9396', '#ee9b00', '#ca6702', '#e9d8a6'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        function getRandomTailColor() {
+            const colors = ['#ee9b00', '#ca6702', '#bb3e03', '#ae2012', '#9b2226'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        // Create bubbles
+        function createBubble() {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            
+            const size = 3 + Math.random() * 10;
+            const left = Math.random() * window.innerWidth;
+            const duration = 8 + Math.random() * 15;
+            const delay = Math.random() * 8;
+            
+            bubble.style.width = `${size}px`;
+            bubble.style.height = `${size}px`;
+            bubble.style.left = `${left}px`;
+            bubble.style.bottom = '0';
+            bubble.style.animation = `float ${duration}s ease-in ${delay}s infinite`;
+            
+            document.body.appendChild(bubble);
+        }
+        
+        // Create decorative elements
+        for (let i = 0; i < 3; i++) createFish();
+        for (let i = 0; i < 8; i++) createBubble();
+        
+        // Menu functionality
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileNav = document.getElementById('mobileNav');
+        const overlay = document.getElementById('overlay');
+        const closeMenu = document.getElementById('closeMenu');
+        const searchToggle = document.getElementById('searchToggle');
+        const mobileSearch = document.getElementById('mobileSearch');
+
+        menuToggle.addEventListener('click', () => {
+            mobileNav.classList.add('active');
+            overlay.classList.add('active');
+        });
+
+        closeMenu.addEventListener('click', () => {
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            mobileNav.classList.remove('active');
+            mobileSearch.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        searchToggle.addEventListener('click', () => {
+            mobileSearch.classList.add('active');
+            overlay.classList.add('active');
+        });
+
+        // Settings Popup Functions
+        function openSettings() {
+            document.getElementById('settingsPopup').style.display = 'block';
+            loadUserProfile();
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsPopup').style.display = 'none';
+        }
+
+        function loadUserProfile() {
+            fetch('get_user_profile.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('username').value = data.username;
+                        document.getElementById('email').value = data.email;
+                        document.getElementById('fullname').value = data.fullname;
+                        document.getElementById('language').value = data.language || 'en';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            
+            fetch('update_profile.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Profile updated successfully!');
+                    closeSettings();
+                } else {
+                    alert(data.message || 'Error updating profile');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        });
+
+        function requestPasswordReset() {
+            const email = document.getElementById('email').value;
+            
+            fetch('request_password_reset.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Password reset instructions have been sent to your email.');
+                } else {
+                    alert(data.message || 'Error requesting password reset');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        }
+
+        // Close settings popup when clicking outside
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('settingsPopup')) {
+                closeSettings();
+            }
+        }
+
+        // Add logout function
+        function logout() {
+            fetch('logout.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = 'ptalogin.html';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    window.location.href = 'ptalogin.html';
+                });
+        }
+
+        function checkAndGoToLearning() {
+            fetch('check_session.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = 'learning.html';
+                    } else {
+                        window.location.href = 'ptalogin.html';
+                    }
+                })
+                .catch(() => {
+                    window.location.href = 'ptalogin.html';
+                });
+        }
+
+        function showRandomFishNews() {
+            const news = [
+                "Scientists have discovered a new species of deep-sea anglerfish in the Pacific Ocean.",
+                "A record-breaking tuna was caught off the coast of Japan, weighing over 600 pounds!",
+                "Coral reefs are seeing a resurgence in fish populations thanks to new conservation efforts.",
+                "The annual salmon run has begun, drawing thousands of fishers to the rivers.",
+                "Researchers are studying how climate change is affecting migratory patterns of ocean fish."
+            ];
+            const randomNews = news[Math.floor(Math.random() * news.length)];
+            document.getElementById('fishNewsContent').textContent = randomNews;
+            var myModal = new bootstrap.Modal(document.getElementById('fishNewsModal'));
+            myModal.show();
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

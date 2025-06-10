@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - Master Fisher</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0077cc, #00b4d8);
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .navbar {
+            background-color: transparent;
+            padding: 20px;
+            text-align: center;
+        }
+        .logo {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .register-container {
+            max-width: 400px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .register-container h2 {
+            color: #0077cc;
+            margin-bottom: 20px;
+        }
+        .register-container input {
+            width: 80%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .register-container button {
+            width: 85%;
+            padding: 12px;
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .error-message {
+            color: #ff4444;
+            margin: 10px 0;
+        }
+        .success-message {
+            color: #00C851;
+            margin: 10px 0;
+        }
+        .password-strength {
+            font-size: 12px;
+            text-align: left;
+            width: 80%;
+            margin: 0 auto 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">Master Fisher</div>
+    </div>
+
+    <div class="register-container">
+        <h2>Create Account</h2>
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+        
+        <form id="registerForm" method="POST" action="register.php">
+            <input type="text" id="username" name="username" placeholder="Username" required>
+            <input type="email" id="email" name="email" placeholder="Email" required>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <div id="passwordStrength" class="password-strength"></div>
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+            <button type="submit">Register</button>
+        </form>
+        <p>Already have an account? <a href="ptalogin.html">Log in</a></p>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Clear messages
+            document.getElementById('errorMessage').textContent = '';
+            document.getElementById('successMessage').textContent = '';
+            
+            // Client-side validation
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if(password !== confirmPassword) {
+                document.getElementById('errorMessage').textContent = 'Passwords do not match';
+                return;
+            }
+            
+            if(password.length < 8) {
+                document.getElementById('errorMessage').textContent = 'Password must be at least 8 characters';
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Registering...';
+            
+            // Submit the form
+            const formData = new FormData(e.target);
+            
+            fetch(e.target.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(text => {
+                // Check if response contains success message
+                if (text.includes('success') || text.includes('Success')) {
+                    document.getElementById('successMessage').textContent = 'Registration successful! Redirecting...';
+                    setTimeout(() => {
+                        window.location.href = "ptahome.html";
+                    }, 1500);
+                } else {
+                    document.getElementById('errorMessage').textContent = text || 'Registration failed';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('errorMessage').textContent = 'An error occurred. Please try again.';
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Register';
+            });
+        });
+
+        // Password strength indicator
+        document.getElementById('password').addEventListener('input', function(e) {
+            const password = e.target.value;
+            const strengthIndicator = document.getElementById('passwordStrength');
+            
+            if(password.length === 0) {
+                strengthIndicator.textContent = '';
+                return;
+            }
+            
+            let strength = 0;
+            if(password.length >= 8) strength++;
+            if(password.length >= 12) strength++;
+            if(/[A-Z]/.test(password)) strength++;
+            if(/[0-9]/.test(password)) strength++;
+            if(/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            const strengthText = ['Very Weak', 'Weak', 'Medium', 'Strong', 'Very Strong'][strength];
+            const strengthColors = ['#ff4444', '#ffbb33', '#ffbb33', '#00C851', '#00C851'];
+            
+            strengthIndicator.textContent = `Password Strength: ${strengthText}`;
+            strengthIndicator.style.color = strengthColors[strength];
+        });
+    </script>
+</body>
+</html>
