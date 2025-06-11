@@ -1,18 +1,9 @@
 <?php
 require_once __DIR__ . '/../DatabaseConnection.php';
-session_start();
+require_once __DIR__ . '/../session_config.php';
+require_once __DIR__ . '/error_handler.php';
 
 header('Content-Type: application/json');
-
-// Check if user is logged in
-function isLoggedIn() {
-    return isset($_SESSION['user_id']);
-}
-
-// Check if user is admin
-function isAdmin() {
-    return isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true;
-}
 
 $database = new Database();
 $conn = $database->getConnection();
@@ -31,12 +22,11 @@ try {
             ");
             $paths = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            // If user is logged in, get their progress for each path
             if (isLoggedIn()) {
                 foreach ($paths as &$path) {
                     $stmt = $conn->prepare("
                         SELECT COUNT(DISTINCT m.id) as total,
-                               COUNT(DISTINCT CASE WHEN up.completed = 1 THEN m.id END) as completed
+                               COUNT(DISTINCT CASE WHEN up.status = 'completed' THEN m.id END) as completed
                         FROM modules m
                         LEFT JOIN user_progress up ON m.id = up.module_id AND up.user_id = ?
                         WHERE m.path_id = ?
@@ -52,7 +42,7 @@ try {
                 }
             }
             
-            echo json_encode(['success' => true, 'paths' => $paths]);
+            sendSuccessResponse(['paths' => $paths]);
             break;
 
         case 'add_path':
@@ -77,17 +67,15 @@ try {
                 $data['difficulty_level'] ?? 'beginner'
             ]);
             
-            echo json_encode([
-                'success' => true,
+            sendSuccessResponse([
                 'message' => 'Learning path created successfully',
                 'path_id' => $conn->lastInsertId()
             ]);
             break;
 
         case 'get_modules':
-            $pathId = $_GET['path_id'] ?? null;
-            if (!$pathId) {
-                throw new Exception('Path ID is required');
+            if (!isset($_GET['path_id'])) {
+                sendErrorResponse('Path ID is required');
             }
 
             $stmt = $conn->prepare("
@@ -101,10 +89,10 @@ try {
                 ORDER BY m.order_number
             ");
             
-            $stmt->execute([isLoggedIn() ? $_SESSION['user_id'] : null, $pathId]);
+            $stmt->execute([isLoggedIn() ? $_SESSION['user_id'] : null, $_GET['path_id']]);
             $modules = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            echo json_encode(['success' => true, 'modules' => $modules]);
+            sendSuccessResponse(['modules' => $modules]);
             break;
 
         case 'add_module':
@@ -144,21 +132,42 @@ try {
                 $data['estimated_duration'] ?? 30
             ]);
             
-            echo json_encode([
-                'success' => true,
+            sendSuccessResponse([
                 'message' => 'Module added successfully',
                 'module_id' => $conn->lastInsertId()
             ]);
             break;
 
+        case 'update_progress':
+            if (!isLoggedIn()) {
+                sendErrorResponse('User must be logged in', 401);
+            }
+
+            $data = json_decode(file_get_contents('php://input'), true);
+            validateRequiredParams($data, ['module_id', 'status']);
+
+            $stmt = $conn->prepare("
+                INSERT INTO user_progress (user_id, module_id, status, completed_at)
+                VALUES (?, ?, ?, CASE WHEN ? = 'completed' THEN CURRENT_TIMESTAMP ELSE NULL END)
+                ON DUPLICATE KEY UPDATE 
+                status = VALUES(status),
+                completed_at = VALUES(completed_at)
+            ");
+            
+            $stmt->execute([
+                $_SESSION['user_id'],
+                $data['module_id'],
+                $data['status'],
+                $data['status']
+            ]);
+            
+            sendSuccessResponse([], 'Progress updated successfully');
+            break;
+
         default:
-            throw new Exception('Invalid action');
+            sendErrorResponse('Invalid action');
     }
 } catch (Exception $e) {
-    http_response_code(400);
-    echo json_encode([
-        'success' => false,
-        'message' => $e->getMessage()
-    ]);
+    handleApiException($e);
 }
 ?> 
